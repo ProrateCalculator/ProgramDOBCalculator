@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program Date of Birth Calculator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f9fc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .calculator {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 340px;
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+  }
+  input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  #result {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+  <div class="calculator">
+    <h2>Program Date of Birth Calculator</h2>
+    <label for="minAge">Minimum Age:</label>
+    <input type="number" id="minAge" min="0">
+
+    <label for="maxAge">Maximum Age:</label>
+    <input type="number" id="maxAge" min="0">
+
+    <label for="targetDate">Registration Start Date:</label>
+    <input type="date" id="targetDate">
+
+    <button onclick="calculateBirthdateRange()">Calculate Date of Birth Range</button>
+
+    <div id="result"></div>
+  </div>
+
+<script>
+function calculateBirthdateRange() {
+  const minAge = parseInt(document.getElementById("minAge").value);
+  const maxAge = parseInt(document.getElementById("maxAge").value);
+  const targetDate = document.getElementById("targetDate").value;
+
+  if (isNaN(minAge) || isNaN(maxAge) || !targetDate) {
+    document.getElementById("result").textContent = "Please enter valid ages and date.";
+    return;
+  }
+
+  const target = new Date(targetDate);
+
+  // To date: 
+  const earliestBirth = new Date(target);
+  earliestBirth.setFullYear(target.getFullYear() - maxAge - 1);
+  earliestBirth.setDate(earliestBirth.getDate() + 2);
+
+  // From date: 
+  const latestBirth = new Date(target);
+  latestBirth.setFullYear(target.getFullYear() - minAge);
+  latestBirth.setDate(latestBirth.getDate() + 1);
+
+  const formatDate = (date) => {
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
+  };
+
+  document.getElementById("result").textContent =
+    `To: ${formatDate(earliestBirth)} From: ${formatDate(latestBirth)}`;
+}
+</script>
+</body>
+</html>
