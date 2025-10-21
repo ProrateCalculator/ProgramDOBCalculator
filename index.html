@@ -18,7 +18,7 @@
     padding: 20px 30px;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    width: 360px;
+    width: 340px;
     text-align: center;
   }
   h2 {
@@ -35,7 +35,6 @@
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    margin-bottom: 5px;
   }
   button {
     margin-top: 15px;
@@ -63,21 +62,18 @@
   <div class="calculator">
     <h2>Program Date of Birth Calculator</h2>
 
-    <label for="minAge">Minimum Age:</label>
-    <input type="number" id="minAge" min="0" placeholder="Enter number">
-    <select id="minAgeUnit">
-      <option value="years" selected>Years</option>
+    <label for="unit">Calculation Unit:</label>
+    <select id="unit">
+      <option value="years">Years</option>
       <option value="months">Months</option>
       <option value="weeks">Weeks</option>
     </select>
 
+    <label for="minAge">Minimum Age:</label>
+    <input type="number" id="minAge" min="0">
+
     <label for="maxAge">Maximum Age:</label>
-    <input type="number" id="maxAge" min="0" placeholder="Enter number">
-    <select id="maxAgeUnit">
-      <option value="years" selected>Years</option>
-      <option value="months">Months</option>
-      <option value="weeks">Weeks</option>
-    </select>
+    <input type="number" id="maxAge" min="0">
 
     <label for="targetDate">Registration Start Date:</label>
     <input type="date" id="targetDate">
@@ -91,9 +87,8 @@
 function calculateBirthdateRange() {
   const minAge = parseFloat(document.getElementById("minAge").value);
   const maxAge = parseFloat(document.getElementById("maxAge").value);
-  const minAgeUnit = document.getElementById("minAgeUnit").value;
-  const maxAgeUnit = document.getElementById("maxAgeUnit").value;
   const targetDate = document.getElementById("targetDate").value;
+  const unit = document.getElementById("unit").value;
 
   if (isNaN(minAge) || isNaN(maxAge) || !targetDate) {
     document.getElementById("result").textContent = "Please enter valid ages and date.";
@@ -101,28 +96,25 @@ function calculateBirthdateRange() {
   }
 
   const target = new Date(targetDate);
+  let earliestBirth = new Date(target);
+  let latestBirth = new Date(target);
 
-  // Helper function to convert units to days
-  const convertToDays = (value, unit) => {
-    switch (unit) {
-      case "years":  return value * 365.25;
-      case "months": return value * 30.44;
-      case "weeks":  return value * 7;
-      default: return 0;
-    }
-  };
+  if (unit === "years") {
+    earliestBirth.setFullYear(target.getFullYear() - maxAge - 1);
+    earliestBirth.setDate(earliestBirth.getDate() + 2);
 
-  const minDays = convertToDays(minAge, minAgeUnit);
-  const maxDays = convertToDays(maxAge, maxAgeUnit);
+    latestBirth.setFullYear(target.getFullYear() - minAge);
+    latestBirth.setDate(latestBirth.getDate() + 1);
+  } 
+  else if (unit === "months") {
+    earliestBirth.setDate(target.getDate() - maxAge * 30.44);
+    latestBirth.setDate(target.getDate() - minAge * 30.44);
+  } 
+  else if (unit === "weeks") {
+    earliestBirth.setDate(target.getDate() - maxAge * 7);
+    latestBirth.setDate(target.getDate() - minAge * 7);
+  }
 
-  // Calculate earliest and latest possible birthdates
-  const earliestBirth = new Date(target);
-  earliestBirth.setDate(earliestBirth.getDate() - maxDays - 1);
-
-  const latestBirth = new Date(target);
-  latestBirth.setDate(latestBirth.getDate() - minDays + 1);
-
-  // Format result in mm/dd/yyyy
   const formatDate = (date) => {
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
