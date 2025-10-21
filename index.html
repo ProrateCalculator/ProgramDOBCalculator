@@ -102,24 +102,27 @@ function calculateBirthdateRange() {
 
   const target = new Date(targetDate);
 
-  // Convert ages to days based on unit
+  // Helper function to convert units to days
   const convertToDays = (value, unit) => {
-    if (unit === "years") return value * 365;
-    if (unit === "months") return value * 30.44;
-    if (unit === "weeks") return value * 7;
-    return 0;
+    switch (unit) {
+      case "years":  return value * 365.25;
+      case "months": return value * 30.44;
+      case "weeks":  return value * 7;
+      default: return 0;
+    }
   };
 
   const minDays = convertToDays(minAge, minAgeUnit);
   const maxDays = convertToDays(maxAge, maxAgeUnit);
 
-  // Earliest and latest possible birthdates
+  // Calculate earliest and latest possible birthdates
   const earliestBirth = new Date(target);
   earliestBirth.setDate(earliestBirth.getDate() - maxDays - 1);
 
   const latestBirth = new Date(target);
-  latestBirth.setDate(latestBirth.getDate() - minDays);
+  latestBirth.setDate(latestBirth.getDate() - minDays + 1);
 
+  // Format result in mm/dd/yyyy
   const formatDate = (date) => {
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
